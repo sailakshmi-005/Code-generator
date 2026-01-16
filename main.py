@@ -23,14 +23,27 @@ SYSTEM_PROMPT = (
     "**Explanation:**\n[Steps here]\n\n**Code:**\n```language\n[your code here]\n```\n"
     "If the user does not mention a language, default to Python."
 )
-
+'''
 def call_model(messages):
   response = openai.chat.completions.create(
       model="gpt-3.5-turbo",
       messages=messages,
   )
   return response['choices'][0]['message']['content'].strip()
-
+'''
+def call_model(messages):
+    response = openai.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=messages,
+    )
+    
+    # FIX: Use dot notation (.) instead of square brackets ([])
+    # Also added a check to make sure choices exist
+    if hasattr(response, 'choices') and len(response.choices) > 0:
+        return response.choices[0].message.content.strip()
+    else:
+        # This will help you see the REAL error if it fails again
+        return f"Error: The AI didn't return a result. Full response: {response}"
 
 def get_history():
     history = session.get("history")
